@@ -526,15 +526,11 @@ def main():
         </div>
         """, unsafe_allow_html=True)
 
-    # MAIN CHAT INTERFACE
-    col1, col2, col3 = st.columns([1, 3, 1])
-    
-    with col2:
-        # Initialize chat history
-        if "messages" not in st.session_state:
-            st.session_state.messages = []
-            # EPIC WELCOME MESSAGE
-            welcome_message = """🎉 **HEY THERE, SUPERSTAR!** 🎉
+    # Initialize chat history
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
+        # EPIC WELCOME MESSAGE
+        welcome_message = """🎉 **HEY THERE, SUPERSTAR!** 🎉
 
 I'm CampusBuddy, your absolutely AMAZING virtual campus assistant! 🚀✨ 
 
@@ -550,48 +546,49 @@ I'm PUMPED to help you with:
 **What awesome thing can I help you discover today?** 🌟
 
 Just ask me anything about campus life and watch the magic happen! ✨"""
-            st.session_state.messages.append({"role": "assistant", "content": welcome_message})
-        
-        # Display chat messages with STUNNING STYLING
-        for message in st.session_state.messages:
-            if message["role"] == "user":
-                with st.chat_message("user"):
-                    st.markdown(message["content"])
-            else:
-                with st.chat_message("assistant", avatar="🎓"):
-                    st.markdown(message["content"])
-        
-        # Chat input with GLOW EFFECT
-        if prompt := st.chat_input("✨ Ask me ANYTHING about campus life! I'm ready to blow your mind! 🎓🚀"):
-            # Add user message to chat history
-            st.session_state.messages.append({"role": "user", "content": prompt})
+        st.session_state.messages.append({"role": "assistant", "content": welcome_message})
+    
+    # Display chat messages with STUNNING STYLING
+    for message in st.session_state.messages:
+        if message["role"] == "user":
             with st.chat_message("user"):
-                st.markdown(prompt)
-            
-            # Generate and display assistant response with EPIC EFFECTS
+                st.markdown(message["content"])
+        else:
             with st.chat_message("assistant", avatar="🎓"):
-                with st.status("🧠 **Working my MAGIC on the campus database...** ✨", expanded=False):
-                    time.sleep(1)
-                    st.write("🔍 **Analyzing your awesome question...**")
-                    time.sleep(0.7)
-                    st.write("📚 **Gathering the most AMAZING information...**")
-                    time.sleep(0.7)
-                    st.write("✨ **Preparing your PERSONALIZED response...**")
-                    time.sleep(0.8)
-                    st.write("🎉 **Almost ready to BLOW YOUR MIND!**")
-                    time.sleep(0.5)
-                
-                response = get_response(prompt, campus_knowledge_base)
-                st.markdown(response)
-                
-                # EPIC CELEBRATION FOR POSITIVE INTERACTIONS
-                if any(keyword in prompt.lower() for keyword in ["thank", "thanks", "great", "awesome", "perfect", "amazing", "love"]):
-                    time.sleep(1)
-                    st.balloons()
-                    st.success("🎉 You're absolutely AMAZING! Keep being awesome! 🌟")
+                st.markdown(message["content"])
+    
+    # ✅ FIXED: Chat input placed at the BOTTOM (outside any containers)
+    # This is the critical fix for the StreamlitAPIException
+    if prompt := st.chat_input("✨ Ask me ANYTHING about campus life! I'm ready to blow your mind! 🎓🚀"):
+        # Add user message to chat history
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        with st.chat_message("user"):
+            st.markdown(prompt)
+        
+        # Generate and display assistant response with EPIC EFFECTS
+        with st.chat_message("assistant", avatar="🎓"):
+            with st.status("🧠 **Working my MAGIC on the campus database...** ✨", expanded=False):
+                time.sleep(1)
+                st.write("🔍 **Analyzing your awesome question...**")
+                time.sleep(0.7)
+                st.write("📚 **Gathering the most AMAZING information...**")
+                time.sleep(0.7)
+                st.write("✨ **Preparing your PERSONALIZED response...**")
+                time.sleep(0.8)
+                st.write("🎉 **Almost ready to BLOW YOUR MIND!**")
+                time.sleep(0.5)
             
-            # Add assistant response to chat history
-            st.session_state.messages.append({"role": "assistant", "content": response})
+            response = get_response(prompt, campus_knowledge_base)
+            st.markdown(response)
+            
+            # EPIC CELEBRATION FOR POSITIVE INTERACTIONS
+            if any(keyword in prompt.lower() for keyword in ["thank", "thanks", "great", "awesome", "perfect", "amazing", "love"]):
+                time.sleep(1)
+                st.balloons()
+                st.success("🎉 You're absolutely AMAZING! Keep being awesome! 🌟")
+        
+        # Add assistant response to chat history
+        st.session_state.messages.append({"role": "assistant", "content": response})
 
 if __name__ == "__main__":
     main()
